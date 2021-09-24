@@ -1,0 +1,23 @@
+{
+  "name": "dreamland",
+  "version": "1.0.0",
+  "description": "This is a platform to make the real estate market more accessible, interactive, and convenient.",
+  "main": "index.js",
+  "dependencies": {
+    "socket.io": "^4.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DrShar/Dreamland.git"
+  },
+  "author": "Nathan Cahill",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DrShar/Dreamland/issues"
+  },
+  "homepage": "https://github.com/DrShar/Dreamland#readme"
+}
