@@ -1,0 +1,21 @@
+{
+  "name": "letschatliving",
+  "version": "1.0.0",
+  "description": "This is going to be setting up the chat room for support and user discussion",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server",
+    "dev" : "nodemon server"
+  },
+  "author": "Nathan Cahill",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "moment": "^2.29.1",
+    "socket.io": "^4.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.13"
+  }
+}
