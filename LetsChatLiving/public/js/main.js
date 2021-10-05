@@ -3,6 +3,35 @@ const chatMessages = document.querySelector('.chat-messages');
 const roomName = document.getElementById('room-name');
 const userList = document.getElementById('users');
 
+//toast notifications
+const Toast = {
+  init(){
+    this.hideTimeout = null;
+
+    this.el = document.createElement('div');
+    this.el.classname = 'toast';
+    document.body.appendChild(this.el);
+  },
+
+  show(message, state){
+    clearTimeout(this.hideTimeout);
+
+    this.el.textContent = message;
+    this.el.className = 'toast toast--visible';
+
+    if(state){
+      this.el.classList.add(`toast--${state}`)
+    }
+
+    this.hideTimeout = setTimeout(() => {
+        this.el.classList.remove('toast--visible')
+    } ,3000);
+  }
+};
+
+document.addEventListener('DOMContentLoaded', ()=> Toast.init());
+
+
 // Get username and room from URL
 const { username, room } = Qs.parse(location.search, {
   ignoreQueryPrefix: true,
