@@ -421,14 +421,14 @@ li {
 .join-header {
   text-align: center;
   padding: 20px;
-  background: var(--dark-color-a);
+  background: #faa301;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
 }
 
 .join-main {
   padding: 30px 40px;
-  background: var(--dark-color-b);
+  background: #5c5c5c;
 }
 
 .join-main p {
