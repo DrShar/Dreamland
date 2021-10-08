@@ -412,6 +412,12 @@ li {
 }
 
 /* Join Page */
+.p {
+  padding: 5px;
+  height: 40px;
+  width: 100%;
+}
+
 .join-container {
   max-width: 500px;
   margin: 80px auto;

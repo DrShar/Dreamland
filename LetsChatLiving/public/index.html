@@ -29,7 +29,7 @@
 			<main class="join-main">
 				<form action="chat.html">
 					<div class="form-control">
-						<label for="username">My ticket number is:</label>
+						<label for="username">Click to generate ticket number</label>
 						<input
 							type="text"
 							name="username"
@@ -37,6 +37,8 @@
 							placeholder="Enter ticket number..."
 							required
 						/>
+						<button type="submit" class="btn" onclick="numberGen()">Generate ticket number</button>
+						<p id="randomNum"></p>
 					</div>
 					<div class="form-control">
 						<label for="room">I have a ticket for:</label>
@@ -51,5 +53,11 @@
 				</form>
 			</main>
 		</div>
+		<script>
+			function numberGen() {
+				var randomId = document.getElementById("randomNum")
+				randomId.innerHTML = Math.floor((Math.random() * 50000) + 10000);
+		  	}
+		</script>
 	</body>
 </html>
