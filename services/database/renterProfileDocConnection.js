@@ -31,4 +31,9 @@ const getRenterProfilesMatchingCriteria = async (criteria) => {
     return renterProfiles;
 }
 
-module.exports = {insertRenterProfile, getRenterProfileWithUserId, updateRenterProfile, getRenterProfilesMatchingCriteria} 
+//THIS IS ONLY HERE FOR TESTING. IN PRODUCTION THERE IS NO MECHANISM TO DELETE RENTER PROFILE, BY DESIGN
+const deleteRenterProfileWithId = async (id) => {
+    await renterProfileModel.findByIdAndDelete(id);
+} 
+
+module.exports = {deleteRenterProfileWithId,insertRenterProfile, getRenterProfileWithUserId, updateRenterProfile, getRenterProfilesMatchingCriteria} 

@@ -38,12 +38,43 @@ app.use('/filter/application_requirements', applicationRequirementSorter);
 
 
 
+const test = () => {
+  
+  Service = require('./services');
+  db = require('./services/database')
+  try {
+    Service.userService.getMultipleUsersWithPersonalInfoQuery({}).then( async users => {
+      users.forEach (async user => {
+          let id = user._id.toString();          
+          await Service.userService.deleteUserWithUserId(id);
+      })
+    })
+  } 
+  catch{}
+
+  try{
+    Service.renterProfileService.getRenterProfilesMatchingCriteria({}).then( async rps => {
+      rps.forEach(async rp => {
+        let id = rp._id.toString();
+        await db.renterProfileDocConnection.deleteRenterProfileWithId(id);
+      })
+    })
+  
+  }
+  catch{}
+    
+  return true;
+
+}
 
 app.post('/test/:api', async (req, res) => {
-    let Controller; 
+    let Controller, Service, db;
     let api = req.params.api;
     switch(api){
-      
+      case "cleanDB":
+        await test();
+        res.send('Complete');
+      break;
       case 'user1':
           Controller = require('./controllers/users/userController');
           req.body = {
@@ -94,6 +125,9 @@ app.post('/test/:api', async (req, res) => {
   
         case 'user5':
           Controller = require('./controllers/users/userController');
+          Service = require('./services/users/userService');
+
+         
           req.body = {
             firstName: "Bart",
             lastName: "Simpson",
@@ -103,6 +137,153 @@ app.post('/test/:api', async (req, res) => {
   
           Controller.createUser(req, res);
         break;
+
+        case 'user6':
+          Controller = require('./controllers/users/userController');
+         
+
+          req.body = {
+            firstName: "Bart",
+            lastName: "Simpson",
+            email: "eatmy@shorts.com",
+            postcode: 3000
+          };
+  
+          Controller.createUser(req, res);
+        break;
+
+        case 'rp1':
+          Controller = require('./controllers/users/renter/renterProfileController');
+          req.body = {
+            "renterProfileData": {
+             "userId": "a bad user id",
+             "employment": {
+                 "employer": "self-employed",
+                 "lengthOfEmployment": "2 months",
+                 "position": "", 
+                 "monthlyIncome": 1000
+             },
+             "personalReferences": [
+                 {
+                     "name": "Alma Forsyth",
+                     "contactNumber": 10000000,
+                     "email": "y@hoo.com",
+                     "relationship": "Cocaine Dealer"
+                 }
+             ],
+             "professionalReferences": [
+                 {
+                     "name": "Pablo Escobar",
+                     "contactNumber": 1800000000,
+                     "email": "stickylover@live.com.au",
+                     "relationship": "Confidant"
+                 }
+             ],
+             "pets": [
+                 {
+                     "species": "dog",
+                     "breed": "spoodle",
+                     "size": "medium",
+                     "age": 8
+                 },
+                 {
+                     "species": "dog",
+                     "breed": "pound special",
+                     "size": "medium",
+                     "age": 10
+                 }
+             ], 
+             "children": 2,
+             "rentalHistory": [
+                 {
+                     "address": "90 the avenue, parkville 3052",
+                     "landlordName": "Jessica Alba",
+                     "landlordEmail": "Parasite420@gmail.com",
+                     "landlordContactNumber": 666,
+                     "lengthOfTenancy": 1,
+                     "bondConditions": {"bondReturned": true, "reasonBondWitheld": "", "amountWitheld": 0},
+                     "evicted": false,
+                     "rentalAgreementBroken": false
+                 }
+             ],
+             "smoker": false,
+             "preferredMoveInDate": "2022.02.02",
+             "committedOfCrime": false}
+         }
+
+         Controller.createRenterProfile(req, res)
+
+
+        break;
+
+        case 'rp2':
+          Controller = require('./controllers/users/renter/renterProfileController');
+          Service = require('./services/users/userService');
+          let userId = await Service.getUserWithPersonalInfoQuery({email: "evilbart@live.com"});
+          userId = userId._id;
+          req.body = {
+            "renterProfileData": {
+             "userId": userId,
+             "employment": {
+                 "employer": "self-employed",
+                 "lengthOfEmployment": "2 months",
+                 "position": "", 
+                 "monthlyIncome": 1000
+             },
+             "personalReferences": [
+                 {
+                     "name": "Alma Forsyth",
+                     "contactNumber": 10000000,
+                     "email": "y@hoo.com",
+                     "relationship": "Cocaine Dealer"
+                 }
+             ],
+             "professionalReferences": [
+                 {
+                     "name": "Pablo Escobar",
+                     "contactNumber": 1800000000,
+                     "email": "stickylover@live.com.au",
+                     "relationship": "Confidant"
+                 }
+             ],
+             "pets": [
+                 {
+                     "species": "dog",
+                     "breed": "spoodle",
+                     "size": "medium",
+                     "age": 8
+                 },
+                 {
+                     "species": "dog",
+                     "breed": "pound special",
+                     "size": "medium",
+                     "age": 10
+                 }
+             ], 
+             "children": 2,
+             "rentalHistory": [
+                 {
+                     "address": "90 the avenue, parkville 3052",
+                     "landlordName": "Jessica Alba",
+                     "landlordEmail": "Parasite420@gmail.com",
+                     "landlordContactNumber": 666,
+                     "lengthOfTenancy": 1,
+                     "bondConditions": {"bondReturned": true, "reasonBondWitheld": "", "amountWitheld": 0},
+                     "evicted": false,
+                     "rentalAgreementBroken": false
+                 }
+             ],
+             "smoker": false,
+             "preferredMoveInDate": "2022.02.02",
+             "committedOfCrime": false}
+         }
+
+         Controller.createRenterProfile(req, res)
+
+
+        break;
+
+        
       }
   });
   
@@ -137,9 +318,14 @@ app.post('/test/:api', async (req, res) => {
         Controller = require('./controllers/users/userController');
         let Service = require('./services/users/userService');
   
-        
+        // try {
+        //   let lisa = await (Service.getUserWithPersonalInfoQuery({firstName: "Lisa"}));
+        //   await Service.deleteUserWithUserId(lisa._id);
+        // } catch{
+
+        // }
         userId = await Service.createUser({firstName: "Lisa", lastName: "Simpson", postcode: 1000, email: "lisa's email"});
-  
+
         req.body = {
           operator: "userId",
           query: userId
@@ -268,7 +454,9 @@ app.put('/test/:api', async (req, res) => {
       req.body = {
         userUpdate: {
         _id: bartsUserId,
-        firstName: "Evil Bart"
+        firstName: "Evil Bart",
+        email: "evilbart@live.com"
+
         }
       };
       Controller.updateUser(req, res);

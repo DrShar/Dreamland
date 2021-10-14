@@ -105,8 +105,9 @@ const getUser = async (req, res) => {
             Service.userService.getMultipleUsersWithPersonalInfoQuery(query).then(userArray => {
                 if (userArray.length == 0){
                     res.status(204).send();
+                } else {
+                    res.status(200).send(userArray);
                 }
-                res.status(200).send(userArray);
             })
         break;        
 
@@ -142,16 +143,37 @@ const deleteUser = (req, res) => {
 
 
 
-const updateUser = (req, res) => { 
+const updateUser = async (req, res) => { 
 
     let userUpdate = req.body.userUpdate;
-    Service.userService.updateUser(userUpdate).then(updateSuccess => {
-        if (updateSuccess){
-            res.status(200).send();
-        } else {
-            res.status(400).send('The user was not updated.');
+    let errorMessage = "The user could not be updated.\n"
+    let changingEmail = false, flag = true;
+    for (var key in userUpdate){
+        if (key == "email"){
+            changingEmail = true;
         }
-    });
+    }
+
+    if (changingEmail){
+        let existingEmail = await Service.userService.getUserWithPersonalInfoQuery({email: userUpdate.email});
+        if (existingEmail != null){
+            flag = false;
+            errorMessage += "This email is already taken.";
+        }
+    }
+
+    if (flag){
+        Service.userService.updateUser(userUpdate).then(updateSuccess => {
+            if (updateSuccess){
+                res.status(200).send(updateSuccess._id);
+            } else {
+                res.status(400).send(errorMessage);
+            }
+        })
+    } else {
+        res.status(400).send(errorMessage);
+    }
+    
 }
 
 

@@ -2,11 +2,13 @@ const { executionAsyncId } = require('async_hooks');
 
 var chai = require('chai'), chaiHttp = require('chai-http'), expect = chai.expect;
 chai.use(chaiHttp);
-var url = 'http://localhost:3000/test';
+let Service = require('../services');
+
+
+
 
 //USER
-describe('create a new user', () => {
-
+describe('POST /user', () => {
     
     it('returns a 400 status and specific error message when firstName is empty', function(done) { 
         chai.request('localhost:3000/test/user1')
@@ -59,7 +61,7 @@ describe('create a new user', () => {
     });
     
     it('returns a 400 status and specific error message when email is in another user doc', function(done) { 
-        chai.request('localhost:3000/test/user5')
+        chai.request('localhost:3000/test/user6')
         .post('/')
         .end(function(err, res) {
             expect(res.text).to.equal('User was not created - this email is associated with another user.');
@@ -70,7 +72,7 @@ describe('create a new user', () => {
 });
 
 
-describe('get user(s)', () => {
+describe('GET /user', () => {
 
     it('returns a 400 status and specific error message when the wrong operator string is used in the request body', function(done) { 
         chai.request('localhost:3000/test/user1')
@@ -155,7 +157,7 @@ describe('get user(s)', () => {
     });
 });
 
-describe('delete user', () => {
+describe('DELETE /user', () => {
 
     it('Returns a 400 status and specific error message when an incorrect userId is passed',  function(done) { 
         chai.request(`localhost:3000/test/user1`)
@@ -186,18 +188,18 @@ describe('delete user', () => {
     });
 });
 
-describe('update user', () => {
+describe('PUT /user', () => {
     it('Returns a 400 status and specific message when an update fails', function(done) {
         chai.request('localhost:3000/test/user1')
         .put('/')
         .end(function(err, res) {
             expect(res).to.have.status(400);
-            expect(res.error.text).to.equal('The user was not updated.');
+            expect(res.error.text).to.equal('The user could not be updated.\n');
             done();
         })
     })
 
-    it('Returns a 200 status when an update is successful', function(done) {
+    it('Returns a 200 status when an update is successful',  function(done) {
         chai.request('localhost:3000/test/user2')
         .put('/')
         .end(function(err, res) {
@@ -207,4 +209,60 @@ describe('update user', () => {
     })
 })
 
+
+
+//RENTER PROFILE
+describe('POST /renter_profile', () => {
+    
+    it ('Returns a 400 status and specific error message when a bad userId is used to reference a user', function(done){
+        chai.request('localhost:3000/test/rp1')
+        .post('/')
+        .end(function(err, res) {
+            expect(res).to.have.status(400);
+            expect(res.error.text).to.equal('Could not create renter profile\nuserId is not associated with a user document.');
+            done()
+        })
+    })
+
+    it ('Returns a 200 status when successfuly inserting a new renterProfile', function(done){
+        chai.request('localhost:3000/test/rp2')
+        .post('/')
+        .end(function(err, res) {
+            expect(res).to.have.status(200);
+            done()
+        })
+    })
+
+    it ('Returns a 400 status when attempting to create a renterProfile with a userId already associated with a renterProfile', function(done){
+        chai.request('localhost:3000/test/rp2')
+        .post('/')
+        .end(function(err, res) {
+            expect(res.text).to.equal('Could not create renter profile\nuserId is associated with a renter profile');
+            expect(res).to.have.status(400);
+            done()
+        })
+    })
+})
+
+
+
+
+
+
+
+
+
+
+
+describe('Database Cleaning', () => {
+
+    it('Cleans the database for the next round of testing', function(done){
+        chai.request('localhost:3000/test/cleanDB')
+        .post('/')
+        .end(function(err, res) {
+            expect(res.text).to.equal('Complete')
+            done();                               
+        });
+    })
+});
 
